@@ -2,14 +2,15 @@
 using namespace std;
 
 /* ---- TO DO ----
-
+- update random symbol generator
+- update hash function
 
 
 */
 
 int main(){
 
-    int choise;
+    int choice;
 
     cout << "Choose testing method: " << endl
     << "---------------------------" << endl
@@ -19,6 +20,10 @@ int main(){
     << " " << endl
     << "---------------------------" << endl;
 
+    choiceCheck(choice, 3);
 
+    if(choice == 1) consoleInput();
+    else if(choice == 2) fileInput();
+    else if(choice == 3) comparison();
 
 }
