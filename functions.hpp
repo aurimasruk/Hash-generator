@@ -14,7 +14,7 @@
 
 using namespace std;
 
-void hashing(string);
+string hashing(string);
 
 void consoleInput();
 
@@ -25,8 +25,6 @@ void fileInput();
 void comparison();
 
 void readFile(string);
-
-void fileGenerator(string, int);
 
 int choiceCheck(int&, int);
 

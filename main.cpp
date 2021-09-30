@@ -2,8 +2,9 @@
 using namespace std;
 
 /* ---- TO DO ----
+- DO MAIN HASH FUNCTION
+- DO COMPARISONS
 - update random symbol generator
-- update hash function
 
 
 */
@@ -17,7 +18,7 @@ int main(){
     << "1. Input in console. " << endl
     << "2. Input from file. " << endl
     << "3. Comparison " << endl
-    << " " << endl
+    << "---------------------------" << endl
     << "---------------------------" << endl;
 
     choiceCheck(choice, 3);
