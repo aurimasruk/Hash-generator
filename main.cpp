@@ -18,7 +18,8 @@ int main(){
     << "1. Input in console. " << endl
     << "2. Input from file. " << endl
     << "3. Comparison " << endl
-    << "---------------------------" << endl
+    << "4. Collision test " << endl
+    << "5. Difference test " << endl
     << "---------------------------" << endl;
 
     choiceCheck(choice, 3);

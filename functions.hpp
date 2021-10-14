@@ -5,8 +5,10 @@
 #include <fstream>
 #include <chrono>
 #include <random>
+#include <algorithm>
 #include <string>
-
+#include <time.h>
+#include <chrono>
 
 #include "includes/md5.h"
 #include "includes/sha1.h"
