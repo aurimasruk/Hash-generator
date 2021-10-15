@@ -100,8 +100,8 @@ void consoleInput(){
 
 }
 
-void gen_random(int length, string file) {
-    
+void gen_random_file(int length, string file) {
+
     ofstream out;
     out.open("fileInput/" + file + ".txt");
 
@@ -120,9 +120,24 @@ void gen_random(int length, string file) {
 
     out << random_str;
     out.close();
+}
 
-    // ---
+string gen_random_str(int length) {
 
+    const string characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+    std::random_device random_device;
+    std::mt19937 generator(random_device());
+    std::uniform_int_distribution<> distribution(0, characters.size() - 1);
+
+    std::string random_str = "";
+
+    for (int i = 0; i < length; ++i)
+    {
+        random_str += characters[distribution(generator)];
+    }
+
+    return random_str;
 }
 
 void fileInput(){
@@ -150,9 +165,9 @@ void fileInput(){
 
         if(temp == 'Y' || temp == 'y'){
             if(choice == 5){
-                gen_random(1500, "1500symbols_1");
+                gen_random_file(1500, "1500symbols_1");
             }
-            else gen_random(1500, "1500symbols_2");
+            else gen_random_file(1500, "1500symbols_2");
         }
 
     }
@@ -178,27 +193,59 @@ void fileInput(){
 
 }
 
-void comparison(){
+void comparison(){          // comparing custom_hash to md5, sha1, sha256
 
-    MD5 md5;
-    SHA1 sha1;
-    SHA256 sha256;
+    // MD5 md5;
+    // SHA1 sha1;
+    // SHA256 sha256;
 
     // reading file / using konstitucija.txt
 
     ifstream in("fileInput/konstitucija.txt");
     if(!in.is_open()){
         cout << "Failed opening 'konstitucija.txt'.";
-        return;
+        exit(0);
     }
+
+    cout << endl <<  "Comparing different hashing algorithm times:" << endl
+    << "----------------------------------------------" << endl;
 
     string line;
 
-    high_resolution_clock::time_point t1 = high_resolution_clock::now();        // CUSTOM HASH
+    double custom_hash_time = 0;
+    double md5_hash_time = 0;
+    double sha1_hash_time = 0;
+    double sha256_hash_time = 0;
+
+    high_resolution_clock::time_point t1; // high_resolution_clock::now();        // CUSTOM HASH
     while(getline(in, line)){
+
+        t1 = high_resolution_clock::now();
         hashing(line);
+        custom_hash_time += chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - t1).count();
+    
+        t1 = high_resolution_clock::now();
+        md5(line);
+        md5_hash_time += chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - t1).count();
+
+        t1 = high_resolution_clock::now();
+        sha1(line);
+        sha1_hash_time += chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - t1).count();
+
+        t1 = high_resolution_clock::now();
+        sha256(line);
+        sha256_hash_time += chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - t1).count();
+    
+    
     }
-    cout << "Custom hash time: " << chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - t1).count() / 1000. << "s." << endl;
+
+    cout << "Custom hash time: " << custom_hash_time / 1000. << "s." << endl
+    << "Md5 hash time: " << md5_hash_time / 1000. << "s." << endl
+    << "Sha1 hash time: " << sha1_hash_time / 1000. << "s." << endl
+    << "Sha256 hash time: " << sha256_hash_time / 1000. << "s." << endl
+    << "----------------------------------------------" << endl << endl;
+
+    in.close();
 
     // t1 = high_resolution_clock::now();        // MD5
     // while(getline(in, line)){
@@ -218,8 +265,35 @@ void comparison(){
     // }
     // cout << "Custom hash time: " << chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - t1).count() / 1000. << "s." << endl;
 
+}
+
+
+void collisions(){
+
+    // creating files
+
+    int fileSizes[4] = {10, 100, 500, 1000};
+    int collisions = 0;
+
+    cout << "Starting collision test:" << endl
+    << "------------------------" << endl;
+
+    cout << "collisions: ";
+    for(int i = 0; i < 4; i++){
+        for(int j = 0; i < 25000; i++){           // BAD GEN!!!!!
+            string a1 = gen_random_str(fileSizes[i]);
+            string b2 = gen_random_str(fileSizes[i]);
+            if(hashing(a1) == hashing(b2)){ //cout << "x";
+                collisions++ ;}
+            
+        } 
+    }
+
+    cout << "Collisions: " << collisions << " out of x" << endl;
+
 
 }
+
 
 int choiceCheck(int &rt, int count){				// choice checkup
 	while(true){

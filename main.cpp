@@ -22,10 +22,12 @@ int main(){
     << "5. Difference test " << endl
     << "---------------------------" << endl;
 
-    choiceCheck(choice, 3);
+    choiceCheck(choice, 5);
 
     if(choice == 1) consoleInput();
     else if(choice == 2) fileInput();
     else if(choice == 3) comparison();
+    else if(choice == 4) collisions();
+    else if(choice == 5) difference();
 
 }

@@ -20,11 +20,17 @@ string hashing(string);
 
 void consoleInput();
 
-void gen_random(int, string);
+void gen_random_file(int, string);
+
+string gen_random_str(int);
 
 void fileInput();
 
 void comparison();
+
+void collisions();
+
+void difference();
 
 void readFile(string);
 
