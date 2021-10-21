@@ -1,14 +1,6 @@
 #include "functions.hpp"
 using namespace std;
 
-/* ---- TO DO ----
-- DO MAIN HASH FUNCTION
-- DO COMPARISONS
-- update random symbol generator
-
-
-*/
-
 int main(){
 
     int choice;

@@ -100,45 +100,40 @@ void consoleInput(){
 
 }
 
-void gen_random_file(int length, string file) {
+void gen_random_file(int length, string file){
 
     ofstream out;
     out.open("fileInput/" + file + ".txt");
 
-    const string characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-    std::random_device random_device;
-    std::mt19937 generator(random_device());
-    std::uniform_int_distribution<> distribution(0, characters.size() - 1);
+    string random_str;
+    static const char alphanum[] = 
+        "0123456789"
+        "ABCDEFGHIJKLMNOPRSTUVWXYZ"
+        "abcdefghijklmnoprstuvwxyz";
 
-    std::string random_str = "";
-
-    for (int i = 0; i < length; ++i)
-    {
-        random_str += characters[distribution(generator)];
+    for(int i = 0; i < length; ++i){
+        random_str += alphanum[rand() % (sizeof(alphanum) - 1)];
     }
-
+    cout << random_str << "  " << endl;     // ...
+    
     out << random_str;
     out.close();
-}
+};
 
-string gen_random_str(int length) {
+string gen_random_str(int length){
+    string random_str;
+    static const char alphanum[] = 
+        "0123456789"
+        "ABCDEFGHIJKLMNOPRSTUVWXYZ"
+        "abcdefghijklmnoprstuvwxyz";
 
-    const string characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
-    std::random_device random_device;
-    std::mt19937 generator(random_device());
-    std::uniform_int_distribution<> distribution(0, characters.size() - 1);
-
-    std::string random_str = "";
-
-    for (int i = 0; i < length; ++i)
-    {
-        random_str += characters[distribution(generator)];
+    for(int i = 0; i < length; ++i){
+        random_str += alphanum[rand() % (sizeof(alphanum) - 1)];
     }
-
+    // cout << random_str << "  " << endl;     // ...
     return random_str;
-}
+};
 
 void fileInput(){
     int choice;
@@ -207,6 +202,8 @@ void comparison(){          // comparing custom_hash to md5, sha1, sha256
         exit(0);
     }
 
+    in.close();
+
     cout << endl <<  "Comparing different hashing algorithm times:" << endl
     << "----------------------------------------------" << endl;
 
@@ -218,25 +215,30 @@ void comparison(){          // comparing custom_hash to md5, sha1, sha256
     double sha256_hash_time = 0;
 
     high_resolution_clock::time_point t1; // high_resolution_clock::now();        // CUSTOM HASH
-    while(getline(in, line)){
 
-        t1 = high_resolution_clock::now();
-        hashing(line);
-        custom_hash_time += chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - t1).count();
-    
-        t1 = high_resolution_clock::now();
-        md5(line);
-        md5_hash_time += chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - t1).count();
+    for(int i = 0; i < 2000; i++){
 
-        t1 = high_resolution_clock::now();
-        sha1(line);
-        sha1_hash_time += chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - t1).count();
+        in.open("fileInput/konstitucija.txt");
 
-        t1 = high_resolution_clock::now();
-        sha256(line);
-        sha256_hash_time += chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - t1).count();
-    
-    
+        while(getline(in, line)){
+
+            t1 = high_resolution_clock::now();
+            hashing(line);
+            custom_hash_time += chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - t1).count();
+        
+            t1 = high_resolution_clock::now();
+            md5(line);
+            md5_hash_time += chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - t1).count();
+
+            t1 = high_resolution_clock::now();
+            sha1(line);
+            sha1_hash_time += chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - t1).count();
+
+            t1 = high_resolution_clock::now();
+            sha256(line);
+            sha256_hash_time += chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - t1).count();
+        }
+        in.close();
     }
 
     cout << "Custom hash time: " << custom_hash_time / 1000. << "s." << endl
@@ -245,7 +247,7 @@ void comparison(){          // comparing custom_hash to md5, sha1, sha256
     << "Sha256 hash time: " << sha256_hash_time / 1000. << "s." << endl
     << "----------------------------------------------" << endl << endl;
 
-    in.close();
+    // in.close();
 
     // t1 = high_resolution_clock::now();        // MD5
     // while(getline(in, line)){
@@ -270,27 +272,110 @@ void comparison(){          // comparing custom_hash to md5, sha1, sha256
 
 void collisions(){
 
-    // creating files
-
     int fileSizes[4] = {10, 100, 500, 1000};
     int collisions = 0;
 
     cout << "Starting collision test:" << endl
-    << "------------------------" << endl;
+         << "------------------------" << endl;
+    cout << "Collisions: ";
 
-    cout << "collisions: ";
-    for(int i = 0; i < 4; i++){
-        for(int j = 0; i < 25000; i++){           // BAD GEN!!!!!
-            string a1 = gen_random_str(fileSizes[i]);
-            string b2 = gen_random_str(fileSizes[i]);
-            if(hashing(a1) == hashing(b2)){ //cout << "x";
-                collisions++ ;}
-            
-        } 
+    string a1, b2;
+
+    for(int x = 0; x < 4; x++){
+        for(int i = 0; i < 25000; i++){
+            a1 = gen_random_str(fileSizes[x]);
+            b2 = gen_random_str(fileSizes[x]);
+
+            if(hashing(a1) == hashing(b2)) collisions++;
+        }
     }
 
-    cout << "Collisions: " << collisions << " out of x" << endl;
+    if(collisions > 0) cout << collisions << " out of 100'000 tests";
+    else cout << "0 out of 100'000. None detected.";
 
+    // cout << a1 << endl << b2 << endl << "-----------------" << endl;
+}
+
+// !
+
+string transform(char temp){
+
+    while(temp){
+        if(temp == '0') return "0000";
+        else if(temp == '1') return "0001";
+        else if(temp == '2') return "0010";
+        else if(temp == '3') return "0011";
+        else if(temp == '4') return "0100";
+        else if(temp == '5') return "0101";
+        else if(temp == '6') return "0110";
+        else if(temp == '7') return "0111";
+        else if(temp == '8') return "1000";
+        else if(temp == '9') return "1001";
+        else if(temp == 'A' || temp == 'a') return "1010";
+        else if(temp == 'B' || temp == 'b') return "1011";
+        else if(temp == 'C' || temp == 'c') return "1100";
+        else if(temp == 'D' || temp == 'd') return "1101";
+        else if(temp == 'E' || temp == 'e') return "1110";
+        else if(temp == 'F' || temp == 'f') return "1111";
+    }
+    
+    return 0;
+}
+
+
+void difference(){
+
+    double bits_min = 256, bits_max = 0, bits_avg = 0;
+    double hex_min = 64, hex_max = 0, hex_avg = 0;
+
+    string temp_str, a1, b2;
+
+    int fileSizes[4] = {10, 100, 500, 1000};
+
+    cout << endl
+         << "Starting difference test" << endl
+         << "------------------------" << endl;
+
+    for(int x = 0; x < 4; x++){
+        for(int i = 0; i < 25000; i++){
+            temp_str = gen_random_str(fileSizes[x]);
+            a1 = hashing("w" + temp_str);
+            b2 = hashing("l" + temp_str);
+
+            double diff_hex = 0;
+            double diff_bit = 0;
+
+            for(int str_i = 0; str_i < a1.length(); str_i ++){
+                // hex
+
+                if(a1[str_i] != b2[str_i]) diff_hex++;
+
+                //bitu lygmenyje
+                string bit_1 = transform(a1[str_i]);
+                string bit_2 = transform(b2[str_i]);
+
+                for(int j = 0; j < bit_1.size(); j++){
+                    if(bit_1[j] != bit_2[j]) diff_bit++;
+                }
+            }
+            
+            if(diff_hex < hex_min) hex_min = diff_hex;
+            if(diff_hex > hex_max) hex_max = diff_hex;
+            hex_avg += diff_hex;
+
+            if(diff_bit < bits_min) bits_min = diff_bit;
+            if(diff_bit > bits_max) bits_max = diff_bit;
+            bits_avg += diff_bit;
+        }
+    }
+
+    hex_avg = hex_avg / 64 / 100000 * 100;
+    bits_avg = bits_avg / 256 / 100000 * 100;
+    
+    cout << "                               hex     bits" << endl;
+    cout << "Minimum difference in pairs:   " << hex_min << "      " << bits_min << endl;
+    cout << "Maximum difference in pairs:   " << hex_max << "      " << bits_max << endl;
+    cout << "Average difference in pairs:   " << setprecision(3) << hex_avg << "%   " << setprecision(3) << bits_avg << "%" << endl;
 
 }
 

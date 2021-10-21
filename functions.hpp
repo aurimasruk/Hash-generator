@@ -1,6 +1,7 @@
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include <fstream>
 #include <chrono>
@@ -29,6 +30,8 @@ void fileInput();
 void comparison();
 
 void collisions();
+
+string transform(char);
 
 void difference();
 
